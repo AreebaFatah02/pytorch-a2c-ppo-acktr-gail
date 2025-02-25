@@ -124,7 +124,7 @@ def main():
                 with torch.no_grad():
                     # 这里 mask并没有什么用,只是为了保持接口一致
                     value, action, action_log_prob = actor_critic.act(
-                        rollouts.obs[step], rollouts.masks[step]
+                        rollouts.obs[step]
                     )
                 #         # Obser reward and next obs
                 obs, reward, done, infos = envs.step(action)

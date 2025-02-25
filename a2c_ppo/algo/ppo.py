@@ -54,7 +54,6 @@ class PPO:
             for sample in data_generator:
                 (
                     obs_batch,
-                    recurrent_hidden_states_batch,
                     actions_batch,
                     value_preds_batch,
                     return_batch,
@@ -64,11 +63,9 @@ class PPO:
                 ) = sample
 
                 # Reshape to do in a single forward pass for all steps
-                values, action_log_probs, dist_entropy, _ = (
+                values, action_log_probs, dist_entropy = (
                     self.actor_critic.evaluate_actions(
                         obs_batch,
-                        recurrent_hidden_states_batch,
-                        masks_batch,
                         actions_batch,
                     )
                 )

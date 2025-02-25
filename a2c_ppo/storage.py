@@ -105,8 +105,8 @@ class RolloutStorage(object):
     def feed_forward_generator(
         self,
         advantages: torch.Tensor,
-        num_mini_batch: int,
-        mini_batch_size: int | None,
+        num_mini_batch: int|None=None,
+        mini_batch_size: int | None=None,
     ) -> Generator[tuple[torch.Tensor, ...], None, None]:
         num_steps, num_processes = self.rewards.size()[0:2]
         batch_size = num_processes * num_steps
