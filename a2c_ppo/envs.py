@@ -36,9 +36,9 @@ def make_env(
         if len(env.observation_space.shape) == 3:
             print("Wrapping env in WarpFrame")
             raise NotImplementedError(
-                """CNN models work only for atari,\n
-                please use a custom wrapper for a custom pixel input env.\n
-                See wrap_deepmind for an example."""
+                "CNN models work only for atari,\n"
+                "please use a custom wrapper for a custom pixel input env.\n"
+                "See wrap_deepmind for an example."
             )
 
         # If the input has shape (W,H,3), wrap for PyTorch convolutions
@@ -73,7 +73,7 @@ def make_vec_envs(
 
     if len(envs.observation_space.shape) == 1:
         if gamma is None:
-            # 默认是 0.99, 所以这里不会执行
+            # default 0.99, so here will not run usually
             envs = VecNormalize(envs, norm_reward=False)
         else:
             envs = VecNormalize(envs, gamma=gamma)
@@ -88,11 +88,11 @@ def make_vec_envs(
     return envs
 
 
-# Checks whether done was caused my timit limits or not
+# Checks whether done was caused my time limits or not
 class TimeLimitMask(gym.Wrapper):
     def step(self, action):
         obs, rew, done, info = self.env.step(action)
-        # TODO: 对gym-ma 的 rewards 作出修改
+        # TODO: Modify rewards for gym-ma if needed
         if done and self.env._max_episode_steps == self.env._elapsed_steps:
             info["bad_transition"] = True
 
@@ -213,13 +213,11 @@ class VecPyTorchFrameStack(VecEnvWrapper):
 
     def step_wait(self):
         obs, rews, news, infos = self.venv.step_wait()
-        self.stacked_obs[:, : -self.shape_dim0] = self.stacked_obs[
-            :, self.shape_dim0 :
-        ].clone()
+        self.stacked_obs[:, :-self.shape_dim0] = self.stacked_obs[:, self.shape_dim0:].clone()
         for i, new in enumerate(news):
             if new:
                 self.stacked_obs[i] = 0
-        self.stacked_obs[:, -self.shape_dim0 :] = obs
+        self.stacked_obs[:, -self.shape_dim0:] = obs
         return self.stacked_obs, rews, news, infos
 
     def reset(self):
@@ -228,7 +226,7 @@ class VecPyTorchFrameStack(VecEnvWrapper):
             self.stacked_obs = torch.zeros(self.stacked_obs.shape)
         else:
             self.stacked_obs.zero_()
-        self.stacked_obs[:, -self.shape_dim0 :] = obs
+        self.stacked_obs[:, -self.shape_dim0:] = obs
         return self.stacked_obs
 
     def close(self):
